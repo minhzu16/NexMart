@@ -41,6 +41,7 @@ public class ProductSearchService {
     private final ShopClient shopClient;
     private final ReviewClient reviewClient;
     private final OrderClient orderClient;
+    private final Map<Long, String> shopNameCache = new java.util.concurrent.ConcurrentHashMap<>();
     
     /**
      * Index a single product
@@ -175,14 +176,17 @@ public class ProductSearchService {
      * Enhanced with data from Shop, Review, Order services
      */
     private ProductDocument convertToDocument(ProductEntity entity) {
-        // Get shop name from Shop Service
+        // Get shop name from Shop Service (cached to eliminate distributed N+1 remote calls)
         String shopName = null;
         if (entity.getShopId() != null) {
-            try {
-                shopName = shopClient.getShopName(entity.getShopId());
-            } catch (Exception e) {
-                log.warn("Failed to fetch shop name for shopId {}: {}", entity.getShopId(), e.getMessage());
-            }
+            shopName = shopNameCache.computeIfAbsent(entity.getShopId(), id -> {
+                try {
+                    return shopClient.getShopName(id);
+                } catch (Exception e) {
+                    log.warn("Failed to fetch shop name for shopId {}: {}", id, e.getMessage());
+                    return "Shop #" + id;
+                }
+            });
         }
         
         // Get review statistics (now cached in ProductEntity)

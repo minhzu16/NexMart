@@ -1,12 +1,8 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { HttpInterceptorFn, provideHttpClient, withInterceptors, HttpHeaders, withFetch } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ToastrModule } from 'ngx-toastr';
-import { NgChartsModule } from 'ng2-charts';
-import { Chart, registerables } from 'chart.js';
-
-Chart.register(...registerables);
 
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
@@ -41,13 +37,13 @@ export const appConfig: ApplicationConfig = {
       // #fragment links (e.g. /home#home-flash-sale) scroll to their target; navigation restores scroll position.
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })
     ),
+    provideAnimationsAsync(),
     provideHttpClient(
       withFetch(),
       withInterceptors([jwtInterceptor, errorInterceptor])
     ),
 
     importProvidersFrom(
-      BrowserAnimationsModule,
       TranslateModule.forRoot({
         defaultLanguage: 'en',
         loader: {
@@ -65,8 +61,7 @@ export const appConfig: ApplicationConfig = {
         autoDismiss: true,
         closeButton: true,
         progressBar: true
-      }),
-      NgChartsModule
+      })
     )
   ]
 };

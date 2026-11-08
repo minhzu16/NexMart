@@ -229,7 +229,11 @@ export class CheckoutComponent implements OnInit {
                 const url = res.redirectUrl || res.paymentUrl || res.url;
                 
                 if (method === 'SEPAY') {
-                    this.cartService.clearCart().subscribe();
+                    if (this.selectedProductIds && this.selectedProductIds.length > 0) {
+                        this.selectedProductIds.forEach(id => this.cartService.removeItem(id).subscribe());
+                    } else {
+                        this.cartService.clearCart().subscribe();
+                    }
                     this.router.navigate(['/orders', orderId, 'success'], {
                         state: { paymentMethod: 'SEPAY', sepayQrUrl: url || '' }
                     });
@@ -245,7 +249,11 @@ export class CheckoutComponent implements OnInit {
     }
 
     completeOrder(orderId?: number) {
-        this.cartService.clearCart().subscribe();
+        if (this.selectedProductIds && this.selectedProductIds.length > 0) {
+            this.selectedProductIds.forEach(id => this.cartService.removeItem(id).subscribe());
+        } else {
+            this.cartService.clearCart().subscribe();
+        }
         this.processing = false;
         const targetId = orderId || 0;
         if (targetId > 0) {

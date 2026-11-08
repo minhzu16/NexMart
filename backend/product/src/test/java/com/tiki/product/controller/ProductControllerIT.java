@@ -23,13 +23,8 @@ class ProductControllerIT {
     }
 
     @Test
-    void getDetail_shouldReturnNotFoundOrOk() throws Exception {
-        mockMvc.perform(get("/api/v1/products/{id}", 1))
-                .andExpect(result -> {
-                    int status = result.getResponse().getStatus();
-                    if (status != 200 && status != 404) {
-                        throw new AssertionError("Expected 200 or 404, got " + status);
-                    }
-                });
+    void getDetail_whenProductNotFound_shouldReturn404() throws Exception {
+        mockMvc.perform(get("/api/v1/products/{id}", 999999))
+                .andExpect(status().isNotFound());
     }
 }

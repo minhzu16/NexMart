@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WebSocketService } from './services/web-socket.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from './services/auth.service';
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit {
   private toastr = inject(ToastrService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     this.translate.setDefaultLang('vi');
@@ -30,12 +32,14 @@ export class AppComponent implements OnInit {
       this.wsService.connect();
     }
 
-    this.wsService.notifications$.subscribe(notification => {
-      this.toastr.info(notification.message, notification.title, {
-        timeOut: 5000,
-        progressBar: true,
-        closeButton: true
+    this.wsService.notifications$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(notification => {
+        this.toastr.info(notification.message, notification.title, {
+          timeOut: 5000,
+          progressBar: true,
+          closeButton: true
+        });
       });
-    });
   }
 }

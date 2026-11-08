@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * Feign Client để gọi Product Service
  * Lấy thông tin sản phẩm và giá
  */
-@FeignClient(name = "product-service", url = "${product.service.url:http://localhost:8084}")
+@FeignClient(name = "product-service", url = "${product.service.url:http://localhost:8081}")
 public interface ProductClient {
     
     /**

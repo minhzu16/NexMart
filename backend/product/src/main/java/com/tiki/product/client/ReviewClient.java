@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * Feign Client for Review Service
  */
-@FeignClient(name = "review-service", url = "${services.review.url:http://localhost:8086}")
+@FeignClient(name = "review-service", url = "${services.review.url:http://localhost:8089}")
 public interface ReviewClient {
     
     /**

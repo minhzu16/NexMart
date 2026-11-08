@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 /**
  * Feign Client for Shop Service
  */
-@FeignClient(name = "shop-service", url = "${services.shop.url:http://localhost:8084}")
+@FeignClient(name = "shop-service", url = "${services.shop.url:http://localhost:8086}")
 public interface ShopClient {
 
     /** Subset of the shop JSON (unknown properties are ignored). */

@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService, UserProfile } from '../../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { NotificationService, Notification } from '../../../services/notification.service';
@@ -19,6 +20,7 @@ export class NavRightComponent implements OnInit {
   public notificationService = inject(NotificationService);
   private router = inject(Router);
   public translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
 
   user: UserProfile | null = null;
   notifications: Notification[] = [];
@@ -26,16 +28,22 @@ export class NavRightComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.authService.getUser();
-    this.authService.getProfile().subscribe(profile => {
-      this.user = profile;
-    });
+    this.authService.getProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(profile => {
+        this.user = profile;
+      });
 
-    this.notificationService.notifications$.subscribe(data => {
-      this.notifications = data;
-    });
-    this.notificationService.unreadCount$.subscribe(count => {
-      this.unreadCount = count;
-    });
+    this.notificationService.notifications$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(data => {
+        this.notifications = data;
+      });
+    this.notificationService.unreadCount$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(count => {
+        this.unreadCount = count;
+      });
 
     this.notificationService.loadNotifications();
   }

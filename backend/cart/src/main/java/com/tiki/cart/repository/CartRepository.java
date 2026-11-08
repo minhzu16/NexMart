@@ -9,9 +9,11 @@ import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<CartEntity, Integer> {
     
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"items"})
     @Query("SELECT c FROM CartEntity c WHERE c.userId = :userId AND c.isActive = :isActive ORDER BY c.createdAt DESC LIMIT 1")
     Optional<CartEntity> findByUserIdAndIsActive(@Param("userId") Integer userId, @Param("isActive") Boolean isActive);
     
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"items"})
     @Query("SELECT c FROM CartEntity c WHERE c.sessionId = :sessionId AND c.isActive = :isActive ORDER BY c.createdAt DESC LIMIT 1")
     Optional<CartEntity> findBySessionIdAndIsActive(@Param("sessionId") String sessionId, @Param("isActive") Boolean isActive);
 }

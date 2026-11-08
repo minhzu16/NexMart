@@ -55,6 +55,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     currentPage = 1;
     pageSize = 12;
     totalPages = 1;
+    totalElements = 0;
 
     // RxJS for debounce
     private searchSubject = new Subject<void>();
@@ -110,6 +111,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
             next: (response: ProductListResponse) => {
                 this.filteredProducts = response.content || [];
                 this.totalPages = response.totalPages || Math.ceil(this.filteredProducts.length / this.pageSize);
+                this.totalElements = response.totalElements ?? this.filteredProducts.length;
                 this.loading = false;
             },
             error: (err) => {
